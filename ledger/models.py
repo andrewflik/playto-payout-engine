@@ -7,16 +7,10 @@
 
 import uuid
 from django.db import models
+from core.constants import LedgerEntryType
 
 
 class LedgerEntry(models.Model):
-    CREDIT = 'credit'
-    DEBIT = 'debit'
-    TYPE_CHOICES = [
-        (CREDIT, 'Credit'),   # credit hua
-        (DEBIT, 'Debit'),     # debit hua
-    ]
-
     id = models.UUIDField(
         primary_key=True,
         default=uuid.uuid4,
@@ -29,7 +23,7 @@ class LedgerEntry(models.Model):
     )
     entry_type = models.CharField(
         max_length=10,
-        choices=TYPE_CHOICES
+        choices=LedgerEntryType.CHOICES
     )
     amount_paise = models.BigIntegerField()  # +ve always
     reference_id = models.UUIDField(

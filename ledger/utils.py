@@ -6,7 +6,6 @@ def get_balance(merchant_id):
     """
         pehle i thought of running 2 seprate aggregate queries for
         debit/credit -> then improved to single query with filters=Q
-
     """
     result = LedgerEntry.objects.filter(
         merchant_id=merchant_id
@@ -26,10 +25,6 @@ def get_balance(merchant_id):
 
 
 def get_balance_breakdown(merchant_id):
-    """
-    Returns total, held (pending/processing payouts), and available balance.
-    Used by the dashboard API.
-    """
     from payouts.models import Payout
 
     total = get_balance(merchant_id)
