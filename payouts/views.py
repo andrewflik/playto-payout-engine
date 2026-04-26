@@ -143,7 +143,7 @@ class PayoutCreateView(APIView):
             )
 
         # queue m dal do for processing
-        from jobs.tasks import process_payout
+        from jobs.tasks import process_payout # yha pre circular import hor tha, niche add krdiya
         process_payout.delay(str(payout.id))
         return Response(
             PayoutSerializer(payout).data,
