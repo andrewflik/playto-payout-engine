@@ -31,8 +31,9 @@ class Payout(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
-        # DB-level pe hi enforce krdiya ki there will be no duplicacy
+        # DB-level pe hi enforce krdiya ki there will be no duplicacy of payouts
         unique_together = ('merchant', 'idempotency_key')
+
         ordering = ['-created_at']
         indexes = [
             models.Index(fields=['merchant', 'status']),

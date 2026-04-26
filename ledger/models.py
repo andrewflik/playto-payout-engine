@@ -3,10 +3,13 @@
     toh i used the field on_delete
 
     one to many from merchant table  -> ledger_ebtry table
+
+    one to many: Merchant → LedgerEntry
 '''
 
 import uuid
 from django.db import models
+from django.db.models import Q
 from core.constants import LedgerEntryType
 
 
@@ -34,6 +37,18 @@ class LedgerEntry(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
+        # i put a unique constraint on these 2 avoid duplicate refunds
+        # if somehow 2 workers get the same payouts to process 
+        constraints = [
+            models.CheckConstraint(
+                condition=Q(amount_paise__gt=0),  # check → condition
+                name='ledger_amount_always_positive'
+            ),
+            models.UniqueConstraint(
+                fields=['reference_id', 'entry_type'],
+                name='unique_reference_entry_type'
+            ),
+        ]
         ordering = ['-created_at']
         indexes = [
             models.Index(fields=['merchant', 'entry_type']),
