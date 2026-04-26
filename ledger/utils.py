@@ -1,6 +1,6 @@
 from django.db.models import Sum, Q
 from .models import LedgerEntry
-
+from core.constants import LedgerEntryType, PayoutStatus
 
 def get_balance(merchant_id):
     """
@@ -12,11 +12,11 @@ def get_balance(merchant_id):
     ).aggregate(
         total_credits=Sum(
             'amount_paise',
-            filter=Q(entry_type=LedgerEntry.CREDIT)
+            filter=Q(entry_type=LedgerEntryType.CREDIT)
         ),
         total_debits=Sum(
             'amount_paise',
-            filter=Q(entry_type=LedgerEntry.DEBIT)
+            filter=Q(entry_type=LedgerEntryType.DEBIT)
         ),
     )
     credits = result['total_credits'] or 0
@@ -31,7 +31,7 @@ def get_balance_breakdown(merchant_id):
 
     held = Payout.objects.filter(
         merchant_id=merchant_id,
-        status__in=[Payout.PENDING, Payout.PROCESSING]
+        status__in=[PayoutStatus.PENDING, PayoutStatus.PROCESSING]
     ).aggregate(
         total=Sum('amount_paise')
     )['total'] or 0

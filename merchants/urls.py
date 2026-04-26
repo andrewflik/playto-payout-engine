@@ -1,2 +1,10 @@
 from django.urls import path
-urlpatterns = [] 
+from .views import MerchantBalanceView
+
+urlpatterns = [
+    path(
+        'merchants/<uuid:merchant_id>/balance/',
+        MerchantBalanceView.as_view(),
+        name='merchant-balance'
+    ),
+]
