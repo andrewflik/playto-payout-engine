@@ -135,14 +135,14 @@ http://localhost:5173
 Make sure your frontend is hitting:
 
 ```text
-http://127.0.0.1:8000/api/v1/
+http://127.0.0.1:8000/api/v1/payouts/
 ```
 
 If needed, update:
 
 ```js
 // example
-const API_BASE = "http://127.0.0.1:8000/api/v1";
+const API_BASE = "http://127.0.0.1:8000/api/v1/payouts/";
 ```
 
 ---
