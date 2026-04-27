@@ -4,8 +4,14 @@ from rest_framework import status
 from django.shortcuts import get_object_or_404
 from merchants.models import Merchant
 from ledger.utils import get_balance_breakdown
-from .serializers import BalanceSerializer
+from .serializers import BalanceSerializer, MerchantSerializer
 
+
+class MerchantListView(APIView):
+    def get(self, request):
+        merchants = Merchant.objects.all()
+        serializer = MerchantSerializer(merchants, many=True)
+        return Response(serializer.data)
 
 class MerchantBalanceView(APIView):
 
