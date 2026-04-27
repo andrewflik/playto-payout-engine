@@ -1,6 +1,8 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
+from django.utils import timezone
+from datetime import timedelta
 from django.db import transaction, IntegrityError
 from django.db.models import Sum, Q
 from django.shortcuts import get_object_or_404
@@ -53,7 +55,9 @@ class PayoutCreateView(APIView):
         try:
             existing = Payout.objects.get(
                 merchant_id=merchant_id,
-                idempotency_key=idempotency_key
+                idempotency_key=idempotency_key,
+                # key expiry added after 24hrs
+                created_at__gte=timezone.now() - timedelta(hours=24) 
             )
             return Response(
                 PayoutSerializer(existing).data,
