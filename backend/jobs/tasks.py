@@ -9,8 +9,8 @@ from django.utils import timezone
 @shared_task(
     bind=True,
     max_retries=3,
-    acks_late=True,              # task stays in queue until completed
-    reject_on_worker_lost=True,  # if worker crashes, redeliver task
+    acks_late=True,              
+    reject_on_worker_lost=True,
 )
 def process_payout(self, payout_id):
     '''
@@ -41,6 +41,8 @@ def process_payout(self, payout_id):
             ]:
                 print(f'Payout {payout_id} already {payout.status} — skipping')
                 return
+
+            # print(f'process_payout start {payout_id} status={payout.status}')
 
             # PENDING → first attempt
             # transition to PROCESSING normally
