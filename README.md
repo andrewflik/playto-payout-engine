@@ -1,31 +1,38 @@
 # PlayTo Payout Engine
 
 This is my submission for Playto Founding Engineer Challenge 2026.
+
 ---
 
 ## Features
 
-* **Idempotent payout creation** (safe retries)
-* **Concurrency-safe balance updates** using row-level locking
-* **Database-enforced invariants** to prevent duplicate payouts
-* **Asynchronous processing** via Celery
-* **Retry-safe design** (no stuck payouts)
-* **Ledger-based balance tracking**
+* Idempotent payout creation (safe retries)
+* Concurrency-safe balance updates (`select_for_update`)
+* Database-level guarantees (no duplicate payouts)
+* Async processing with Celery
+* Clean retry model (no stuck payouts)
+* Simple frontend dashboard for interaction
 
 ---
 
 ## Tech Stack
 
-* Backend: Django + Django REST Framework
-* Database: PostgreSQL
-* Async Tasks: Celery + Redis
-* Testing: pytest / HTTP-based tests
+### Backend
+
+* Django + DRF
+* PostgreSQL
+* Celery + Redis
+
+### Frontend
+
+* React
+* Tailwind CSS
 
 ---
 
-## Setup Instructions
+## ⚙️ Backend Setup
 
-### 1. Clone the repository
+### 1. Clone repo
 
 ```bash
 git clone https://github.com/your-username/playto-payout-engine.git
@@ -34,12 +41,11 @@ cd playto-payout-engine/backend
 
 ---
 
-### 2. Create virtual environment
+### 2. Virtual environment
 
 ```bash
 python -m venv venv
 venv\Scripts\activate   # Windows
-# source venv/bin/activate  # Mac/Linux
 ```
 
 ---
@@ -52,9 +58,9 @@ pip install -r requirements.txt
 
 ---
 
-### 4. Setup environment variables
+### 4. Configure DB
 
-Create a `.env` file (optional) or use defaults:
+Update `.env` or use defaults:
 
 ```env
 DB_NAME=playto_pay
@@ -66,7 +72,7 @@ DB_PORT=5432
 
 ---
 
-### 5. Run database migrations
+### 5. Migrate
 
 ```bash
 python manage.py migrate
@@ -74,46 +80,76 @@ python manage.py migrate
 
 ---
 
-### 6. Seed initial data
+### 6. Seed data
 
 ```bash
 python manage.py seed_data
 ```
 
-This creates:
-
-* merchants
-* initial credits
-
 ---
 
-### 7. Start Redis
+### 7. Start services
 
 ```bash
 redis-server
-```
-
----
-
-### 8. Start Celery worker
-
-```bash
 celery -A core worker -l info
-```
-
----
-
-### 9. Run the server
-
-```bash
 python manage.py runserver
 ```
 
 ---
 
-## Running Tests
+## Frontend Setup
 
-### Django / pytest tests
+```bash
+cd ../frontend
+```
+
+### 1. Install dependencies
+
+```bash
+npm install
+```
+
+---
+
+### 2. Start frontend
+
+```bash
+npm run dev
+```
+
+(or `npm start` depending on setup)
+
+---
+
+### 3. Open app
+
+```text
+http://localhost:5173
+```
+
+---
+
+## Connecting Frontend → Backend
+
+Make sure your frontend is hitting:
+
+```text
+http://127.0.0.1:8000/api/v1/
+```
+
+If needed, update:
+
+```js
+// example
+const API_BASE = "http://127.0.0.1:8000/api/v1";
+```
+
+---
+
+## Testing
+
+### Backend tests
 
 ```bash
 pytest
@@ -121,7 +157,7 @@ pytest
 
 ---
 
-### HTTP-based tests
+### HTTP tests
 
 ```bash
 python test/idempotency_test.py
@@ -129,4 +165,3 @@ python test/concurrency_test.py
 ```
 
 ---
-
