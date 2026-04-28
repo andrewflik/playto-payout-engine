@@ -24,7 +24,7 @@ So everytime balance is queries I get the merrchants_id and query his/her CREDIT
 ## 2. The Locks
 
 Heres the code that prevents overdrawing of balance. (p.s : sorry for the hinglish comments)
-```
+```python
 ########## CRITICAL SECTION ###########
 ########## LOCK liya ##################
 try:
