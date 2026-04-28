@@ -147,8 +147,8 @@ class PayoutCreateView(APIView):
             )
 
         # queue m dal do for processing
-        from jobs.tasks import process_payout # yha pre circular import hor tha, niche add krdiya
-        process_payout.delay(str(payout.id))
+        from jobs.tasks import process_payout_sync # yha pre circular import hor tha, niche add krdiya
+        process_payout_sync(str(payout.id))
         return Response(
             PayoutSerializer(payout).data,
             status=status.HTTP_201_CREATED

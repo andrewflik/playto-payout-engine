@@ -107,6 +107,46 @@ def process_payout(self, payout_id):
             raise exc
 
 
+def process_payout_sync(payout_id):
+    try:
+        with transaction.atomic():
+            try:
+                payout = Payout.objects.select_for_update().get(id=payout_id)
+            except Payout.DoesNotExist:
+                return
+
+            if payout.status in [
+                PayoutStatus.COMPLETED,
+                PayoutStatus.FAILED
+            ]:
+                print(f'Payout {payout_id} already {payout.status} — skipping')
+                return
+
+            if payout.status == PayoutStatus.PENDING:
+                payout.transition_to(PayoutStatus.PROCESSING)
+                payout.attempts += 1
+                payout.save(update_fields=['attempts', 'updated_at'])
+            elif payout.status == PayoutStatus.PROCESSING:
+                if payout.attempts >= 3:
+                    processFailure(payout)
+                    return
+                payout.attempts += 1
+                payout.save(update_fields=['attempts', 'updated_at'])
+
+        res = random.choices(
+            ['success', 'fail', 'hang'], [70, 20, 10]
+        )
+
+        print(f'Payout {payout_id} attempt {payout.attempts} — outcome: {res[0]}')
+
+        if res[0] == 'success':
+            processSuccess(payout)
+        else:
+            processFailure(payout)
+    except Payout.DoesNotExist:
+        return
+
+
 def processSuccess(payout):
     with transaction.atomic():
         # lock lgao -> kaam kro 
