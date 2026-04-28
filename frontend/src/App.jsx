@@ -13,8 +13,9 @@ export default function App() {
 
   useEffect(() => {
     getMerchants().then(res => {
-      setMerchants(res.data)
-      if (res.data.length > 0) setSelectedId(res.data[0].id)
+      const merchantsData = Array.isArray(res.data) ? res.data : []
+      setMerchants(merchantsData)
+      if (merchantsData.length > 0) setSelectedId(merchantsData[0].id)
     })
   }, [])
 
@@ -31,7 +32,9 @@ export default function App() {
     setRefreshTrigger(t => t + 1)
   }, [])
 
-  const selectedMerchant = merchants.find(m => m.id === selectedId)
+  const selectedMerchant = Array.isArray(merchants)
+    ? merchants.find(m => m.id === selectedId)
+    : null
 
   return (
     <div className="min-h-screen bg-gray-50">
