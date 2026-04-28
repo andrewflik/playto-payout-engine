@@ -4,6 +4,13 @@ This is my submission for Playto Founding Engineer Challenge 2026.
 
 ---
 
+## Branches
+
+- **main**: Fully functional with Celery for async payout processing. Use for local development and testing.
+- **dev**: Deployment-ready version that processes payouts synchronously to avoid Celery/Redis setup. Used for production deployment where background workers are not available.
+
+---
+
 ## Features
 
 * Idempotent payout creation (safe retries)
@@ -31,6 +38,8 @@ This is my submission for Playto Founding Engineer Challenge 2026.
 ---
 
 ## ⚙️ Backend Setup
+
+**Note**: This setup is for the `main` branch. For deployment, use the `dev` branch which skips Celery.
 
 ### 1. Clone repo
 
@@ -83,7 +92,7 @@ python manage.py migrate
 ### 6. Seed data
 
 ```bash
-python manage.py seed_data
+python manage.py seed
 ```
 
 ---
