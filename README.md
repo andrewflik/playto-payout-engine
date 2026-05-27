@@ -1,63 +1,58 @@
-# PlayTo Payout Engine
+# PayFlow — Payout Engine
 
-This is my submission for Playto Founding Engineer Challenge 2026.
+A hobby project I built to explore reliable payout processing — idempotency, concurrency safety, and async job queues. Nothing production-critical, just a deep dive into patterns I wanted to understand better.
 
 ---
 
 ## Branches
 
-- **main**: Fully functional with Celery for async payout processing. Use for local development and testing.
-- **dev**: Deployment-ready version that processes payouts synchronously to avoid Celery/Redis setup. Used for production deployment where background workers are not available.
+- **main**: Full setup with Celery for async payout processing. Use for local development and testing.
+- **dev**: Synchronous version — no Celery or Redis required. Easier to spin up quickly.
 
 ---
 
-## Features
+## What I was exploring
 
-* Idempotent payout creation (safe retries)
-* Concurrency-safe balance updates (`select_for_update`)
-* Database-level guarantees (no duplicate payouts)
-* Async processing with Celery
-* Clean retry model (no stuck payouts)
-* Simple frontend dashboard for interaction
+- Idempotent payout creation (safe retries without double-processing)
+- Concurrency-safe balance updates using `select_for_update`
+- Database-level guarantees against duplicate payouts
+- Async job processing with Celery + Redis
+- Clean retry logic — no stuck or zombie payouts
+- A minimal React dashboard to interact with it all
 
 ---
 
 ## Tech Stack
 
 ### Backend
-
-* Django + DRF
-* PostgreSQL
-* Celery + Redis
+- Django + DRF
+- PostgreSQL
+- Celery + Redis
 
 ### Frontend
-
-* React
-* Tailwind CSS
+- React
+- Tailwind CSS
 
 ---
 
-## ⚙️ Backend Setup
+## Backend Setup
 
-**Note**: This setup is for the `main` branch. For deployment, use the `dev` branch which skips Celery.
+> For the simpler setup without Celery, switch to the `dev` branch.
 
-### 1. Clone repo
+### 1. Clone the repo
 
 ```bash
-git clone https://github.com/your-username/playto-payout-engine.git
-cd playto-payout-engine/backend
+git clone https://github.com/your-username/payflow.git
+cd payflow/backend
 ```
 
----
-
-### 2. Virtual environment
+### 2. Create a virtual environment
 
 ```bash
 python -m venv venv
 venv\Scripts\activate   # Windows
+# source venv/bin/activate  # macOS/Linux
 ```
-
----
 
 ### 3. Install dependencies
 
@@ -65,37 +60,29 @@ venv\Scripts\activate   # Windows
 pip install -r requirements.txt
 ```
 
----
+### 4. Configure the database
 
-### 4. Configure DB
-
-Update `.env` or use defaults:
+Update `.env` or use the defaults:
 
 ```env
-DB_NAME=playto_pay
+DB_NAME=payflow
 DB_USER=postgres
 DB_PASSWORD=1234
 DB_HOST=localhost
 DB_PORT=5432
 ```
 
----
-
-### 5. Migrate
+### 5. Run migrations
 
 ```bash
 python manage.py migrate
 ```
 
----
-
-### 6. Seed data
+### 6. Seed sample data
 
 ```bash
 python manage.py seed
 ```
-
----
 
 ### 7. Start services
 
@@ -111,66 +98,37 @@ python manage.py runserver
 
 ```bash
 cd ../frontend
-```
-
-### 1. Install dependencies
-
-```bash
 npm install
-```
-
----
-
-### 2. Start frontend
-
-```bash
 npm run dev
 ```
 
-(or `npm start` depending on setup)
-
----
-
-### 3. Open app
-
-```text
-http://localhost:5173
-```
+Open at: `http://localhost:5173`
 
 ---
 
 ## Connecting Frontend → Backend
 
-Make sure your frontend is hitting:
+The frontend expects the API at:
 
-```text
+```
 http://127.0.0.1:8000/api/v1/payouts/
 ```
 
-If needed, update:
+To change it:
 
 ```js
-// example
 const API_BASE = "http://127.0.0.1:8000/api/v1/payouts/";
 ```
 
 ---
 
-## Testing
-
-### Backend tests
+## Tests
 
 ```bash
+# Unit tests
 pytest
-```
 
----
-
-### HTTP tests
-
-```bash
+# Idempotency + concurrency scenarios
 python test/idempotency_test.py
 python test/concurrency_test.py
 ```
-
----
